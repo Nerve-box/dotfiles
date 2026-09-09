@@ -1,5 +1,5 @@
-# dotfiles
-Dotfiles for homelabs
+# .nb dotfiles
+**n**o **b**rainer dotfiles for homelabs
 
 ## What is it ?
 
