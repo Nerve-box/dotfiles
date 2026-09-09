@@ -326,9 +326,9 @@ EOF
   echo "    Check status with: systemctl status ${NAME}.service ${NAME}-proxy.socket ${NAME}-monitor.service"
 }
 
-nb_revert_autoscale() {
+nb_autoscale_revert() {
     local name="$1"
-    [ -z "$name" ] && die "Usage: nb_revert_autoscale <service-name>"
+    [ -z "$name" ] && die "Usage: nb_autoscale_revert <service-name>"
     [ "$EUID" -ne 0 ] && die "This must be run as root."
 
     local systemd_dir="/etc/systemd/system"
