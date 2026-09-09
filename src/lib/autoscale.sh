@@ -1,8 +1,4 @@
-#!/usr/bin/env bash
-
 nb_autoscale() {
-
-  set -euo pipefail
 
   # ---------------------------------------------------------------------------
   # Step 1: System checks
