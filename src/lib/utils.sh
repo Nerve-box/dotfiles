@@ -8,9 +8,13 @@ YELLOW="\033[1;33m"
 NC="\033[0m"
 
 log()  { echo -e "${GREEN}[*]${NC} $*"; }
+export -f log
 warn()  { echo -e "${YELLOW}[!]${NC} $*"; }
+export -f warn
 error() { echo -e "${RED}[x]${NC} $*" >&2; }
+export -f error
 die()   { error "$*"; exit 1; }
+export -f die
 
 # Read a line from the real terminal (from tty or input)
 ask() {
@@ -23,3 +27,4 @@ ask() {
     read -r -p "$prompt" reply < /dev/tty
     printf -v "$__resultvar" '%s' "$reply"
 }
+export -f ask
