@@ -314,7 +314,6 @@ systemctl daemon-reload
 
 echo "Enabling ${NAME}-proxy.socket, ${NAME}.service and ${NAME}-monitor.service..."
 systemctl enable --now "${NAME}-proxy.socket"
-systemctl enable "${NAME}.service"
 systemctl enable --now "${NAME}-monitor.service"
 
 echo "Done! Summary:"
