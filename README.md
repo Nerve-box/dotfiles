@@ -11,7 +11,7 @@ This is developed for debian/ubuntu distros
 ## The no-brainer setup
 
 ```
-wget -qO /tmp/dotfiles.tar.gz https://github.com/Nerve-box/dotfiles/archive/refs/tags/v0.0.1.tar.gz && mkdir -p /tmp/dotfiles-extract && tar -xzf /tmp/dotfiles.tar.gz -C /tmp/dotfiles-extract && mkdir -p ~/.nb && mv /tmp/dotfiles-extract/*/src/* ~/.nb/ && grep -qxF 'source ~/.nb/nb.sh' ~/.bashrc || echo 'source ~/.nb/nb.sh' >> ~/.bashrc
+wget -qO /tmp/dotfiles.tar.gz https://github.com/Nerve-box/dotfiles/archive/refs/tags/v0.0.2.tar.gz && mkdir -p /tmp/dotfiles-extract && tar -xzf /tmp/dotfiles.tar.gz -C /tmp/dotfiles-extract && mkdir -p ~/.nb && mv /tmp/dotfiles-extract/*/src/* ~/.nb/ && grep -qxF 'source ~/.nb/nb.sh' ~/.bashrc || echo 'source ~/.nb/nb.sh' >> ~/.bashrc
 ```
 Then refresh your terminal or `source ~/.bashrc` to perform initial setup.
 
