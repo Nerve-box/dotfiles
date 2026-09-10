@@ -6,6 +6,7 @@
 
 NB_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
+source "$NB_DIR/install/pre.sh"
 source "$NB_DIR/install/git.sh"
 source "$NB_DIR/install/github.sh"
 source "$NB_DIR/install/node.sh"
