@@ -7,7 +7,7 @@ GREEN="\033[0;32m"
 YELLOW="\033[1;33m"
 NC="\033[0m"
 
-info()  { echo -e "${GREEN}[*]${NC} $*"; }
+log()  { echo -e "${GREEN}[*]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[!]${NC} $*"; }
 error() { echo -e "${RED}[x]${NC} $*" >&2; }
 die()   { error "$*"; exit 1; }
