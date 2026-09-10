@@ -11,6 +11,5 @@ source "$NB_DIR/install/github.sh"
 source "$NB_DIR/install/node.sh"
 
 source "$NB_DIR/lib/utils.sh"
-source "$NB_DIR/lib/autoscale.sh"
 
 export PATH="$PATH:$NB_DIR/bin"
