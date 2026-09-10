@@ -9,7 +9,7 @@ set -euo pipefail
   # Step 1: System checks
   # ---------------------------------------------------------------------------
 
-  log "Running system compatibility checks..."
+  echo "Running system compatibility checks..."
 
   if ! command -v systemctl >/dev/null 2>&1 || [ ! -d /run/systemd/system ]; then
     die "This system does not appear to be running systemd. Aborting."
@@ -138,7 +138,7 @@ set -euo pipefail
     break
   done
 
-  log "Configuration:"
+  echo "Configuration:"
   echo "    Name:          $NAME"
   echo "    Public port:   $PUBLIC_PORT"
   echo "    Internal port: $INTERNAL_PORT"
@@ -151,7 +151,7 @@ set -euo pipefail
   # ---------------------------------------------------------------------------
 
   if [ "$FOUND_EXISTING" = true ]; then
-    log "Stopping existing units before reconfiguring..."
+    echo "Stopping existing units before reconfiguring..."
     systemctl stop "${NAME}-monitor.service" 2>/dev/null || true
     systemctl stop "${NAME}-proxy.socket" 2>/dev/null || true
     systemctl stop "${NAME}-proxy.service" 2>/dev/null || true
@@ -166,7 +166,7 @@ set -euo pipefail
   # ---------------------------------------------------------------------------
 
   if [ -n "$OLD_INTERNAL_PORT" ] && [ "$OLD_INTERNAL_PORT" != "$INTERNAL_PORT" ]; then
-    log "Internal port changed (${OLD_INTERNAL_PORT} -> ${INTERNAL_PORT}); removing old firewall rules for ${OLD_INTERNAL_PORT}..."
+    echo "Internal port changed (${OLD_INTERNAL_PORT} -> ${INTERNAL_PORT}); removing old firewall rules for ${OLD_INTERNAL_PORT}..."
     case "$OLD_FIREWALL_TOOL" in
       ufw)
         ufw delete allow in on lo to any port "${OLD_INTERNAL_PORT}" proto tcp 2>/dev/null || true
@@ -198,7 +198,7 @@ set -euo pipefail
   # misinterpreted or rejected by the unit parser.
   START_CMD_ESCAPED="${START_CMD//%/%%}"
 
-  log "Creating ${NAME}.service..."
+  echo "Creating ${NAME}.service..."
   cat > "${SYSTEMD_DIR}/${NAME}.service" <<EOF
 [Unit]
 Description=${NAME} service
@@ -215,7 +215,7 @@ EOF
   # Step 6: Socket unit
   # ---------------------------------------------------------------------------
 
-  log "Creating ${NAME}-proxy.socket..."
+  echo "Creating ${NAME}-proxy.socket..."
   cat > "${SYSTEMD_DIR}/${NAME}-proxy.socket" <<EOF
 [Unit]
 Description=${NAME} Socket Activation
@@ -231,7 +231,7 @@ EOF
   # Step 7: Proxy service
   # ---------------------------------------------------------------------------
 
-  log "Creating ${NAME}-proxy.service..."
+  echo "Creating ${NAME}-proxy.service..."
   cat > "${SYSTEMD_DIR}/${NAME}-proxy.service" <<EOF
 [Unit]
 Description=${NAME} Socket Proxy
@@ -251,7 +251,7 @@ EOF
   # Step 8: Monitor service
   # ---------------------------------------------------------------------------
 
-  log "Creating ${NAME}-monitor.service..."
+  echo "Creating ${NAME}-monitor.service..."
   cat > "${SYSTEMD_DIR}/${NAME}-monitor.service" <<EOF
 [Unit]
 Description=Network Idle Monitor for ${NAME}
@@ -272,7 +272,7 @@ EOF
   # port is never briefly reachable from outside during first-time setup.
   # ---------------------------------------------------------------------------
 
-  log "Configuring firewall to block external access to internal port ${INTERNAL_PORT}..."
+  echo "Configuring firewall to block external access to internal port ${INTERNAL_PORT}..."
   FIREWALL_CONFIGURED=false
   FIREWALL_TOOL=""
 
@@ -284,7 +284,7 @@ EOF
     ufw deny in to any port "${INTERNAL_PORT}" proto tcp comment "${NAME}: block external access to internal port" || true
     FIREWALL_CONFIGURED=true
     FIREWALL_TOOL="ufw"
-    log "ufw rules added: allow loopback, deny external traffic to tcp/${INTERNAL_PORT}."
+    echo "ufw rules added: allow loopback, deny external traffic to tcp/${INTERNAL_PORT}."
   elif command -v firewall-cmd >/dev/null 2>&1 && systemctl is-active --quiet firewalld; then
     # Accept rule for loopback runs at default priority (0); reject rule is
     # given a lower-precedence (higher-numbered) priority so it's evaluated
@@ -294,13 +294,13 @@ EOF
     firewall-cmd --reload || true
     FIREWALL_CONFIGURED=true
     FIREWALL_TOOL="firewalld"
-    log "firewalld rules added: allow loopback, reject external traffic to tcp/${INTERNAL_PORT}."
+    echo "firewalld rules added: allow loopback, reject external traffic to tcp/${INTERNAL_PORT}."
   elif command -v iptables >/dev/null 2>&1; then
     iptables -C INPUT -p tcp --dport "${INTERNAL_PORT}" ! -i lo -j DROP 2>/dev/null || \
       iptables -I INPUT -p tcp --dport "${INTERNAL_PORT}" ! -i lo -j DROP
     FIREWALL_CONFIGURED=true
     FIREWALL_TOOL="iptables"
-    log "iptables rule added: drop non-loopback traffic to tcp/${INTERNAL_PORT}."
+    echo "iptables rule added: drop non-loopback traffic to tcp/${INTERNAL_PORT}."
     warn "iptables rules are not persistent across reboots by default. Consider installing iptables-persistent or netfilter-persistent."
   fi
 
@@ -312,20 +312,18 @@ EOF
   # Step 11: reload, enable/(re)start
   # ---------------------------------------------------------------------------
 
-  log "Reloading systemd daemon..."
+  echo "Reloading systemd daemon..."
   systemctl daemon-reload
 
-  log "Enabling ${NAME}-proxy.socket, ${NAME}.service and ${NAME}-monitor.service..."
+  echo "Enabling ${NAME}-proxy.socket, ${NAME}.service and ${NAME}-monitor.service..."
   systemctl enable --now "${NAME}-proxy.socket"
   systemctl enable "${NAME}.service"
   systemctl enable --now "${NAME}-monitor.service"
 
-  echo
-  log "Done! Summary:"
+  echo "Done! Summary:"
   echo "    Public endpoint:  0.0.0.0:${PUBLIC_PORT}  (socket-activated)"
   echo "    Internal target:  0.0.0.0:${INTERNAL_PORT} (firewalled from outside)"
   echo "    Service:          ${NAME}.service"
   echo "    Proxy:            ${NAME}-proxy.service / ${NAME}-proxy.socket"
   echo "    Idle monitor:     ${NAME}-monitor.service (stops the service after 360s of no connections)"
-  echo
   echo "    Check status with: systemctl status ${NAME}.service ${NAME}-proxy.socket ${NAME}-monitor.service"
