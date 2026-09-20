@@ -1,3 +1,5 @@
+#!/bin/bash
+
 proc_opts=$(findmnt -no OPTIONS /proc)
 
 if [[ ! $proc_opts =~ hidepid=([124]|noaccess|invisible|ptraceable) ]]; then

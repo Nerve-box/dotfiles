@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Load minimal profile
 source "$NB_DIR/profiles/m.sh"
 

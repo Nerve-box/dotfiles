@@ -1,3 +1,5 @@
+#!/bin/bash
+
 KEYFILE="$HOME/.ssh/id_ed25519"
 
 # Generate the key once, if missing

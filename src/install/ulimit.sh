@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if (( $(ulimit -Sn) < 65536 )); then
     cat > /etc/security/limits.d/99-nofile.conf <<'EOF'
 * soft nofile 65536

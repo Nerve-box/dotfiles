@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Install a socket-activated service that is stopped when idle (systemd).
-# Needs only bash, coreutils and systemd; die/warn/error/ask come from the environment.
+
+# Configures a socket-activated service that is stopped when idle (systemd).
+
 set -euo pipefail
 
 
@@ -42,7 +43,7 @@ valid_internal_port() {
 }
 valid_cmd() { [[ -n $1 ]] || { error "Start command cannot be empty."; return 1; }; }
 
-# --- Checks ------------------------------------------------------------------
+# Checks
 
 (( EUID == 0 )) || die "This must be run as root."
 [[ -d /run/systemd/system ]] || die "systemd is not running."
@@ -51,7 +52,7 @@ for f in bin/nb_monitor templates/{app.service,proxy.socket,proxy.service,monito
   [[ -f $NB_DIR/$f ]] || die "Missing $NB_DIR/$f"
 done
 
-# --- Inputs ------------------------------------------------------------------
+# Inputs
 
 ask_valid "Service name (letters, numbers, - and _): " NAME valid_name
 
@@ -77,7 +78,7 @@ confirm "Proceed?" || die "Aborted."
 EXEC_START=${START_CMD//%/%%}
 EXEC_START=${EXEC_START//\$/\$\$}
 
-# --- Install -----------------------------------------------------------------
+# Install
 
 if $existing; then
   echo "Stopping existing units..."

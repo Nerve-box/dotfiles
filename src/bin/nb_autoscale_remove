@@ -1,7 +1,6 @@
 #!/bin/bash
-# ---------------------------------------------------------------------------
+
 # Removes autoscale config
-# ---------------------------------------------------------------------------
 
 set -euo pipefail
 
@@ -18,7 +17,7 @@ monitor_service="${name}-monitor.service"
 
 
 systemctl stop "$monitor_service" "$proxy_socket" "$proxy_service" "$app_service" 2>/dev/null || true
-systemctl disable "$monitor_service" "$proxy_socket" "$svc" 2>/dev/null || true
+systemctl disable "$monitor_service" "$proxy_socket" "$app_service" 2>/dev/null || true
 
 
 rm -f "${systemd_dir}/${app_service}" "${systemd_dir}/${proxy_service}" "${systemd_dir}/${proxy_socket}" "${systemd_dir}/${monitor_service}"

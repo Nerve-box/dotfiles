@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Minimal profile
 
 source "$NB_DIR/install/hidepid.sh"
