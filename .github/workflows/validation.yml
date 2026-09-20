@@ -16,7 +16,7 @@ jobs:
       run: source ./src/nb.sh
       env:
         CI: true
-        NB_PROFILE: "m"
+        NB_PROFILE: "z"
     - name: Run ShellCheck
       uses: Azbagheri/shell-linter@latest
       with:
