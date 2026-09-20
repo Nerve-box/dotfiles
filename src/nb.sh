@@ -13,7 +13,7 @@ source "$NB_DIR/install/pre.sh"
 
 # Check NB_PROFILE
 if [[ -z "${NB_PROFILE:-}" ]]; then
-    ask_choice NB_PROFILE "Select profile (m)inimal, (n)ode, (b)un, (g)eneral" "mnbg"
+    ask_choice NB_PROFILE "Select profile (m)inimal, (n)ode, (b)un, (g)eneral, (z)ero" "mnbgz"
     export NB_PROFILE
     echo "export NB_PROFILE=$NB_PROFILE" >> $NB_DIR/install/pre.sh
 fi
