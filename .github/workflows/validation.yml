@@ -21,3 +21,4 @@ jobs:
       uses: Azbagheri/shell-linter@latest
       with:
         path: "src"
+        severity: "error"

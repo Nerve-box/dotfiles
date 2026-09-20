@@ -8,7 +8,11 @@ set -euo pipefail
 NB_DIR=${NB_DIR:-$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")}
 UNIT_DIR=/etc/systemd/system
 MONITOR_SCRIPT=$NB_DIR/bin/nb_monitor
-NAME= PUBLIC_PORT= INTERNAL_PORT= START_CMD= CONFIRM=
+NAME=''
+PUBLIC_PORT=''
+INTERNAL_PORT=''
+START_CMD=''
+CONFIRM=''
 
 # render TEMPLATE UNIT: fill templates/TEMPLATE.txt into $UNIT_DIR/UNIT.
 # EXEC_START goes last so user input is never rescanned for placeholders.
