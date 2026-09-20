@@ -13,7 +13,7 @@ Tested in Proxmox VE
 ## The no-brainer setup
 
 ```
-wget -qO /tmp/dotfiles.tar.gz https://github.com/Nerve-box/dotfiles/archive/refs/tags/v0.0.3.tar.gz && mkdir -p /tmp/dotfiles-extract && tar -xzf /tmp/dotfiles.tar.gz -C /tmp/dotfiles-extract && mkdir -p ~/.nb && mv /tmp/dotfiles-extract/*/src/* ~/.nb/ && grep -qxF 'source ~/.nb/nb.sh' ~/.bashrc || echo 'source ~/.nb/nb.sh' >> ~/.bashrc
+wget -qO- https://raw.githubusercontent.com/Nerve-box/dotfiles/refs/heads/release/src/bin/nb_update | bash
 ```
 Then refresh your terminal or `source ~/.bashrc` to perform initial setup.
 
