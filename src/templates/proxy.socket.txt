@@ -1,0 +1,8 @@
+[Unit]
+Description=${NAME} Socket Activation
+
+[Socket]
+ListenStream=${PUBLIC_PORT}
+
+[Install]
+WantedBy=sockets.target

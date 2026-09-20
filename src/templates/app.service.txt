@@ -1,0 +1,9 @@
+[Unit]
+Description=${NAME} service
+BindsTo=${NAME}-proxy.socket
+After=${NAME}-proxy.socket
+
+[Service]
+ExecStart=${START_CMD_ESCAPED}
+Restart=on-failure
+RestartSec=3s

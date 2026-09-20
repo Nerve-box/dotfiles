@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# Install a socket-activated service that is stopped when idle (systemd).
+# Needs only bash, coreutils and systemd; die/warn/error/ask come from the environment.
+set -euo pipefail
+
+
+NB_DIR=${NB_DIR:-$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")}
+UNIT_DIR=/etc/systemd/system
+MONITOR_SCRIPT=$NB_DIR/bin/nb_monitor
+NAME= PUBLIC_PORT= INTERNAL_PORT= START_CMD= CONFIRM=
+
+# render TEMPLATE UNIT: fill templates/TEMPLATE.txt into $UNIT_DIR/UNIT.
+# EXEC_START goes last so user input is never rescanned for placeholders.
+render() {
+  local text var
+  text=$(<"$NB_DIR/templates/$1.txt")
+  for var in NAME PUBLIC_PORT INTERNAL_PORT MONITOR_SCRIPT EXEC_START; do
+    text=${text//"\${$var}"/"${!var}"}
+  done
+  printf '%s\n' "$text" > "$UNIT_DIR/$2"
+}
+
+# ask_valid PROMPT VAR VALIDATOR: re-prompt until the validator passes.
+ask_valid() {
+  while :; do
+    ask "$1" "$2" || die "No input."
+    "$3" "${!2}" && return
+  done
+}
+
+confirm() { ask "$1 [y/N]: " CONFIRM; [[ $CONFIRM == [Yy] ]]; }
+
+valid_name() {
+  [[ $1 =~ ^[A-Za-z0-9_-]+$ ]] || { error "Use letters, numbers, '-' and '_' only."; return 1; }
+}
+valid_port() {
+  [[ $1 =~ ^[1-9][0-9]{0,4}$ ]] && (( $1 <= 65535 )) || { error "Port must be a number from 1 to 65535."; return 1; }
+}
+valid_internal_port() {
+  valid_port "$1" || return
+  [[ $1 != "$PUBLIC_PORT" ]] || { error "Internal port must differ from the public port."; return 1; }
+}
+valid_cmd() { [[ -n $1 ]] || { error "Start command cannot be empty."; return 1; }; }
+
+# --- Checks ------------------------------------------------------------------
+
+(( EUID == 0 )) || die "This must be run as root."
+[[ -d /run/systemd/system ]] || die "systemd is not running."
+
+for f in bin/nb_monitor templates/{app.service,proxy.socket,proxy.service,monitor.service}.txt; do
+  [[ -f $NB_DIR/$f ]] || die "Missing $NB_DIR/$f"
+done
+
+# --- Inputs ------------------------------------------------------------------
+
+ask_valid "Service name (letters, numbers, - and _): " NAME valid_name
+
+# Stop order matters: monitor first, so it cannot restart what we stop.
+units=("$NAME-monitor.service" "$NAME-proxy.socket" "$NAME-proxy.service" "$NAME.service")
+existing=false
+for u in "${units[@]}"; do [[ -e $UNIT_DIR/$u ]] && existing=true; done
+
+if $existing; then
+  warn "'$NAME' is already installed."
+  confirm "Overwrite and reconfigure it?" || die "Aborted."
+fi
+
+ask_valid "Public port (what clients connect to): " PUBLIC_PORT valid_port
+ask_valid "Internal port (where your app listens): " INTERNAL_PORT valid_internal_port
+ask_valid "Start command (wrap pipes, &&, redirects in 'sh -c ...'): " START_CMD valid_cmd
+
+printf '%-15s %s\n' 'Name:' "$NAME" 'Public port:' "$PUBLIC_PORT" \
+  'Internal port:' "$INTERNAL_PORT" 'Start command:' "$START_CMD"
+confirm "Proceed?" || die "Aborted."
+
+# systemd treats % and $ specially in ExecStart; double them to pass literally.
+EXEC_START=${START_CMD//%/%%}
+EXEC_START=${EXEC_START//\$/\$\$}
+
+# --- Install -----------------------------------------------------------------
+
+if $existing; then
+  echo "Stopping existing units..."
+  for u in "${units[@]}"; do systemctl disable --now "$u" 2>/dev/null || true; done
+fi
+
+render app.service     "$NAME.service"
+render proxy.socket    "$NAME-proxy.socket"
+render proxy.service   "$NAME-proxy.service"
+render monitor.service "$NAME-monitor.service"
+
+systemctl daemon-reload
+systemctl enable --now "$NAME-proxy.socket" "$NAME-monitor.service"
+
+echo "Done. $NAME is socket-activated on port $PUBLIC_PORT (app on internal port $INTERNAL_PORT, stopped when idle)."
+echo "Status: systemctl status $NAME.service $NAME-proxy.socket $NAME-monitor.service"

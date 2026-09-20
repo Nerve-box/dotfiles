@@ -1,0 +1,28 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------
+# Removes autoscale config
+# ---------------------------------------------------------------------------
+
+set -euo pipefail
+
+name="$1"
+[ -z "$name" ] && die "Usage: nb_autoscale_remove <service-name>"
+[ "$EUID" -ne 0 ] && die "This must be run as root."
+[[ -d /run/systemd/system ]] || die "systemd is not running."
+
+systemd_dir="/etc/systemd/system"
+app_service="${name}.service"
+proxy_service="${name}-proxy.service"
+proxy_socket="${name}-proxy.socket"
+monitor_service="${name}-monitor.service"
+
+
+systemctl stop "$monitor_service" "$proxy_socket" "$proxy_service" "$app_service" 2>/dev/null || true
+systemctl disable "$monitor_service" "$proxy_socket" "$svc" 2>/dev/null || true
+
+
+rm -f "${systemd_dir}/${app_service}" "${systemd_dir}/${proxy_service}" "${systemd_dir}/${proxy_socket}" "${systemd_dir}/${monitor_service}"
+systemctl daemon-reload
+systemctl reset-failed 2>/dev/null || true
+
+echo "Done. '${name}' removed."
