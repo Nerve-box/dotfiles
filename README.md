@@ -26,24 +26,28 @@ Choosing a profile (`$NB_PROFILE`) which applies configurations and installs sof
   - `ulimit`: Bumps ulimit to `65536`
 
 - [N]ode
-  - <Everything included in Minimal>
+  - `<Everything included in Minimal>`
   - `git`: Installs git
   - `node`: Installs NVM + Node + npm (latest LTS), adds a `.npmrc` config with good security defaults
   - `ssh-agent`: Sets up an ssh key for `{USER}@{HOST}.arpa` and adds it to the ssh-agent*
 
 - [B]un
-  - <Everything included in Minimal>
+  - `<Everything included in Minimal>`
   - `git`: Installs git
   - `bun`: Installs Bun (latest LTS), adds a `bunfig.toml` config with good security defaults
   - `ssh-agent`: Sets up an ssh key for `{USER}@{HOST}.arpa` and adds it to the ssh-agent*
 
 - [G]eneral
-  - <Everything included in Minimal>
+  - `<Everything included in Minimal>`
   - `git`: Installs git
   - `build-essential` (make, g++, gcc, dpkg-dev libc6-dev)
   - `ssh-agent`: Sets up an ssh key for `{USER}@{HOST}.arpa` and adds it to the ssh-agent*
 
-> * Security node: Always prefer readonly Deploy keys assigned to a specific project, rather than root User SSH keys.
+- [Z]ero
+  - (Nothing)
+
+
+> Security note: Always prefer readonly Deploy keys assigned to a specific project, rather than root User SSH keys.
 
 
 ## What tools it includes
@@ -53,7 +57,16 @@ Choosing a profile (`$NB_PROFILE`) which applies configurations and installs sof
 - `nb_autoscale_revert`
   - Interactive script that removes all autoscale systemd services for a command.
 - `nb_update`
-  - Updates the local scripts 
+  - Installs or updates the local nb scripts
+- `nb_uninstall`
+  - Uninstalls the local nb scripts
+
+
+## Exported variables
+
+- `NB_DIR`: NB script directory
+- `NB_PROFILE`: Currently loaded profile
+- `NB_VERSION`: Current NB scripts version
 
 ## License
 

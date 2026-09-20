@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Uninstall all NB scripts
+
+rm -rf $NB_DIR
+sed -i '\|^source ~/\.nb/nb\.sh$|d' ~/.bashrc
+unset NB_DIR
+unset NB_PROFILE
+unset NB_VERSION
+
+echo "NB scripts have been uninstalled"
