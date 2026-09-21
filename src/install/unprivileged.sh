@@ -1,3 +1,5 @@
+#!/bin/bash
+
 user="nb_${HOSTNAME%%.*}"
 
 export NB_USER=$user

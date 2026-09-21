@@ -9,3 +9,4 @@ unset NB_PROFILE
 unset NB_VERSION
 
 echo "NB scripts have been uninstalled"
+echo "WARNING: created systemd units and unprivileged users created by NB scripts have not been changed. You may encounter issues if using `nb_autoscale`"
