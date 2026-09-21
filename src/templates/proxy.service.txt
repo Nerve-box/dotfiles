@@ -4,6 +4,16 @@ Requires=${NAME}.service
 After=${NAME}.service
 
 [Service]
+DynamicUser=yes
+PrivateDevices=yes
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+
 # Starting the app process does not mean it is listening yet.
 # Wait (up to ~30s) until the backend actually accepts connections
 # before handing traffic to it, to avoid dropping the client's

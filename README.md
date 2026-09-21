@@ -24,30 +24,33 @@ Choosing a profile (`$NB_PROFILE`) which applies configurations and installs sof
 - [M]inimal
   - `hidepid`: Enforces hidepid on non-root users
   - `ulimit`: Bumps ulimit to `65536`
+  - `unprivileged`: Creates an unprivileged user `nb_{HOSTNAME}`
 
 - [N]ode
   - `<Everything included in Minimal>`
   - `git`: Installs git
   - `node`: Installs NVM + Node + npm (latest LTS), adds a `.npmrc` config with good security defaults
-  - `ssh-agent`: Sets up an ssh key for `{USER}@{HOST}.arpa` and adds it to the ssh-agent*
+  - `ssh-agent`: Sets up an ssh key for `{USER}@{HOSTNAME}.arpa` and adds it to the ssh-agent*
 
 - [B]un
   - `<Everything included in Minimal>`
   - `git`: Installs git
   - `bun`: Installs Bun (latest LTS), adds a `bunfig.toml` config with good security defaults
-  - `ssh-agent`: Sets up an ssh key for `{USER}@{HOST}.arpa` and adds it to the ssh-agent*
+  - `ssh-agent`: Sets up an ssh key for `{USER}@{HOSTNAME}.arpa` and adds it to the ssh-agent*
 
 - [G]eneral
   - `<Everything included in Minimal>`
   - `git`: Installs git
   - `build-essential` (make, g++, gcc, dpkg-dev libc6-dev)
-  - `ssh-agent`: Sets up an ssh key for `{USER}@{HOST}.arpa` and adds it to the ssh-agent*
+  - `ssh-agent`: Sets up an ssh key for `{USER}@{HOSTNAME}.arpa` and adds it to the ssh-agent*
 
 - [Z]ero
   - (Nothing)
 
 
-> Security note: Always prefer readonly Deploy keys assigned to a specific project, rather than root User SSH keys.
+> Security notes:
+> - Always prefer readonly Deploy keys assigned to a specific project, rather than root User SSH keys.
+> - `nb_autoscale` systemd units use the unprivileged user created by nb scripts. You should always install apps inside "/home/nb_$HOSTNAME"
 
 
 ## What tools it includes
@@ -67,6 +70,7 @@ Choosing a profile (`$NB_PROFILE`) which applies configurations and installs sof
 - `NB_DIR`: NB script directory
 - `NB_PROFILE`: Currently loaded profile
 - `NB_VERSION`: Current NB scripts version
+- `NB_USER`: Unprivileged user created by NB scripts
 
 ## License
 
