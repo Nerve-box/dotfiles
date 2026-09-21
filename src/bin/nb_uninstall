@@ -2,7 +2,12 @@
 
 # Uninstall all NB scripts
 
-rm -rf $NB_DIR
+if [ -z "${NB_DIR:-}" ]; then
+    echo "NB_DIR is not set, aborting" >&2
+    exit 1
+fi
+
+rm -rf -- "$NB_DIR"
 sed -i '\|^source ~/\.nb/nb\.sh$|d' ~/.bashrc
 unset NB_DIR
 unset NB_PROFILE
