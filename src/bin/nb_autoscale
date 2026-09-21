@@ -13,13 +13,14 @@ PUBLIC_PORT=''
 INTERNAL_PORT=''
 START_CMD=''
 CONFIRM=''
+RUN_USER=$NB_USER
 
 # render TEMPLATE UNIT: fill templates/TEMPLATE.txt into $UNIT_DIR/UNIT.
 # EXEC_START goes last so user input is never rescanned for placeholders.
 render() {
   local text var
   text=$(<"$NB_DIR/templates/$1.txt")
-  for var in NAME PUBLIC_PORT INTERNAL_PORT MONITOR_SCRIPT EXEC_START; do
+  for var in NAME RUN_USER PUBLIC_PORT INTERNAL_PORT MONITOR_SCRIPT EXEC_START; do
     text=${text//"\${$var}"/"${!var}"}
   done
   printf '%s\n' "$text" > "$UNIT_DIR/$2"
@@ -74,7 +75,7 @@ ask_valid "Public port (what clients connect to): " PUBLIC_PORT valid_port
 ask_valid "Internal port (where your app listens): " INTERNAL_PORT valid_internal_port
 ask_valid "Start command (wrap pipes, &&, redirects in 'sh -c ...'): " START_CMD valid_cmd
 
-printf '%-15s %s\n' 'Name:' "$NAME" 'Public port:' "$PUBLIC_PORT" \
+printf '%-15s %s\n' 'Name:' "$NAME" 'Run as user:' "$RUN_USER" 'Public port:' "$PUBLIC_PORT" \
   'Internal port:' "$INTERNAL_PORT" 'Start command:' "$START_CMD"
 confirm "Proceed?" || die "Aborted."
 

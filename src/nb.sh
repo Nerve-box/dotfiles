@@ -22,3 +22,5 @@ source "$NB_DIR/profiles/$NB_PROFILE.sh"
 
 # Export cmd tools
 export PATH="$PATH:$NB_DIR/bin"
+export NB_DIR=$NB_DIR
+export NB_VERSION='0.0.4'

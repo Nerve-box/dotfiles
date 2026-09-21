@@ -4,6 +4,18 @@ After=network.target
 
 [Service]
 Type=simple
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=full
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+
 ExecStart=${MONITOR_SCRIPT} ${PUBLIC_PORT} ${NAME}
 Restart=always
 RestartSec=5

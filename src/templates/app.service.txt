@@ -4,6 +4,18 @@ BindsTo=${NAME}-proxy.socket
 After=${NAME}-proxy.socket
 
 [Service]
-ExecStart=${START_CMD_ESCAPED}
+# Security
+User=${RUN_USER}
+KeyringMode=private
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+NoNewPrivileges=yes
+PrivateDevices=yes
+ProtectSystem=full
+
+ExecStart=${EXEC_START}
 Restart=on-failure
 RestartSec=3s

@@ -4,9 +4,19 @@ Requires=${NAME}.service
 After=${NAME}.service
 
 [Service]
+DynamicUser=yes
+PrivateDevices=yes
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+
 # Starting the app process does not mean it is listening yet.
 # Wait (up to ~30s) until the backend actually accepts connections
 # before handing traffic to it, to avoid dropping the client's
 # already-accepted connection (seen as ECONNRESET on the client).
-ExecStartPre=/bin/bash -c 'for i in \$(seq 1 150); do (echo > /dev/tcp/127.0.0.1/${INTERNAL_PORT}) >/dev/null 2>&1 && exit 0; sleep 0.2; done; echo "${NAME}: backend on port ${INTERNAL_PORT} did not become ready in time" >&2; exit 1'
-ExecStart=${SOCKET_PROXYD} 0.0.0.0:${INTERNAL_PORT}
+ExecStartPre=/usr/bin/timeout 30 /bin/bash -c 'until (echo > /dev/tcp/127.0.0.1/${INTERNAL_PORT}) 2>/dev/null; do sleep 0.2; done'
+ExecStart=/lib/systemd/systemd-socket-proxyd 0.0.0.0:${INTERNAL_PORT}

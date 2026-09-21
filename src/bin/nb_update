@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Update scripts
+# Install/Update scripts
 
 set -euo pipefail
 
@@ -21,3 +21,11 @@ SRC_DIR="$(find "${TMP_DIR}" -mindepth 2 -maxdepth 2 -type d -name src | head -n
 [ -d "$NB_DIR" ] && { rm -rf "${NB_DIR}.bak"; mv "$NB_DIR" "${NB_DIR}.bak"; }
 mkdir -p "$NB_DIR"
 mv "$SRC_DIR"/* "$NB_DIR/"
+
+grep -qxF 'source ~/.nb/nb.sh' ~/.bashrc || echo 'source ~/.nb/nb.sh' >> ~/.bashrc
+
+echo "Latest NB scripts installed"
+
+if ! command -v ask &> /dev/null; then
+  echo 'Run "source ~/.bashrc" to refresh your terminal'
+fi
